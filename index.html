@@ -4,79 +4,98 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
   <title>🎡 Karar Çarkı</title>
+  <!-- Google Fonts: Poppins -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <style>
     * {
       margin: 0;
       padding: 0;
       box-sizing: border-box;
     }
+
     body {
-      background: linear-gradient(145deg, #2d1b3a 0%, #1a1a2e 100%);
+      font-family: 'Poppins', sans-serif;
       min-height: 100vh;
       display: flex;
       justify-content: center;
       align-items: center;
-      font-family: 'Segoe UI', 'Poppins', system-ui, sans-serif;
       padding: 20px;
       margin: 0;
+      /* İnce geometrik desen (soft diamond grid) */
+      background-color: #f9f6f1;
+      background-image: 
+        linear-gradient(45deg, rgba(212, 198, 176, 0.25) 25%, transparent 25%),
+        linear-gradient(-45deg, rgba(212, 198, 176, 0.25) 25%, transparent 25%),
+        linear-gradient(45deg, transparent 75%, rgba(212, 198, 176, 0.25) 75%),
+        linear-gradient(-45deg, transparent 75%, rgba(212, 198, 176, 0.25) 75%);
+      background-size: 24px 24px;
+      background-position: 0 0, 0 12px, 12px -12px, -12px 0px;
     }
+
     .container {
       max-width: 650px;
       width: 100%;
-      background: rgba(255, 255, 255, 0.08);
-      backdrop-filter: blur(16px);
+      background: rgba(255, 250, 245, 0.9);
+      backdrop-filter: blur(14px);
       border-radius: 42px;
       padding: 30px 25px;
-      box-shadow: 0 30px 50px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(255, 255, 255, 0.15);
+      box-shadow: 0 25px 45px rgba(0, 0, 0, 0.08), 0 0 0 1px rgba(200, 180, 150, 0.5);
       display: flex;
       flex-direction: column;
       align-items: center;
     }
+
     h1 {
-      color: #ffe9b0;
+      color: #4a3f35;
       font-weight: 600;
       font-size: 2.4rem;
-      letter-spacing: 2px;
+      letter-spacing: 1px;
       margin-bottom: 15px;
-      text-shadow: 0 4px 12px rgba(0,0,0,0.5);
       display: flex;
       align-items: center;
       gap: 10px;
+      text-shadow: 0 2px 5px rgba(0,0,0,0.03);
     }
+
     .wheel-wrapper {
       position: relative;
       margin: 10px 0 20px;
     }
+
     canvas {
       display: block;
       margin: 0 auto;
       border-radius: 50%;
-      box-shadow: 0 20px 35px rgba(0, 0, 0, 0.7), 0 0 30px rgba(255, 215, 0, 0.3);
-      background: #222;
+      box-shadow: 0 20px 35px rgba(0, 0, 0, 0.08), 0 0 0 8px rgba(255, 245, 235, 0.9);
+      background: #faf5ef;
       transition: box-shadow 0.3s;
     }
+
     .pointer {
       position: absolute;
       top: -18px;
       left: 50%;
       transform: translateX(-50%);
-      font-size: 2.8rem;
-      filter: drop-shadow(0 8px 10px black);
+      font-size: 2.6rem;
+      filter: drop-shadow(0 6px 8px rgba(0,0,0,0.15));
       z-index: 10;
-      color: #ffd966;
-      text-shadow: 0 0 10px gold;
+      color: #b9915e;
+      text-shadow: 0 0 8px rgba(180, 130, 70, 0.3);
       line-height: 1;
     }
+
     .result-area {
-      background: rgba(0,0,0,0.5);
-      backdrop-filter: blur(12px);
+      background: rgba(255, 245, 235, 0.8);
+      backdrop-filter: blur(10px);
       border-radius: 60px;
-      padding: 12px 28px;
+      padding: 14px 30px;
       margin: 15px 0 20px;
       font-size: 1.6rem;
-      font-weight: bold;
-      color: #fce38a;
-      border: 1px solid rgba(255,255,200,0.4);
+      font-weight: 500;
+      color: #5a4a3a;
+      border: 1px solid rgba(200, 170, 130, 0.4);
       text-align: center;
       min-height: 65px;
       display: flex;
@@ -84,71 +103,93 @@
       justify-content: center;
       width: 100%;
     }
+
     .input-section {
       display: flex;
       gap: 10px;
       width: 100%;
       margin: 10px 0 5px;
     }
+
     #optionInput {
       flex: 1;
       padding: 14px 20px;
       border-radius: 50px;
-      border: none;
-      background: rgba(255,255,255,0.15);
-      color: white;
-      font-size: 1.1rem;
+      border: 1px solid #d4c2ae;
+      background: rgba(255, 255, 255, 0.7);
+      color: #3a332b;
+      font-size: 1rem;
+      font-family: 'Poppins', sans-serif;
       outline: none;
-      border: 1px solid rgba(255,255,255,0.25);
       transition: 0.25s;
+      box-shadow: inset 0 2px 6px rgba(0,0,0,0.02);
     }
+
     #optionInput::placeholder {
-      color: #ccc;
+      color: #b8a68e;
       font-style: italic;
+      font-weight: 300;
     }
+
     #optionInput:focus {
-      border-color: #ffb347;
-      background: rgba(255,255,255,0.22);
+      border-color: #c9a87c;
+      background: white;
+      box-shadow: 0 0 0 3px rgba(220, 180, 120, 0.2);
     }
+
     .btn {
-      background: #ffb347;
+      font-family: 'Poppins', sans-serif;
       border: none;
       border-radius: 50px;
       padding: 14px 24px;
-      font-weight: bold;
+      font-weight: 600;
       font-size: 1rem;
-      color: #1a1a2e;
       cursor: pointer;
-      transition: 0.2s;
+      transition: 0.2s ease;
       display: flex;
       align-items: center;
       gap: 5px;
-      background: linear-gradient(135deg, #f9d56e, #f8b042);
-      box-shadow: 0 6px 0 #b4450c, 0 8px 20px rgba(0,0,0,0.4);
-      border: 1px solid #ffdd99;
-      letter-spacing: 0.5px;
+      background: #f5ebe0;
+      color: #5c4a36;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.05), 0 1px 2px rgba(0,0,0,0.05);
+      border: 1px solid #ddd0be;
+      letter-spacing: 0.3px;
     }
+
+    .btn:hover {
+      background: #efe0cf;
+      border-color: #c8b294;
+    }
+
     .btn:active {
-      transform: translateY(3px);
-      box-shadow: 0 3px 0 #b4450c, 0 5px 12px black;
+      transform: translateY(2px);
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
     }
-    .btn.secondary {
-      background: #4e4376;
-      box-shadow: 0 6px 0 #2a2042;
-      border-color: #7e6bb0;
-      color: #f0e9ff;
-      background: linear-gradient(135deg, #5d5090, #3a325e);
-    }
+
     .spin-btn {
-      background: #f05454;
-      box-shadow: 0 6px 0 #931a1a;
-      border-color: #ff8a8a;
+      background: #e4c9a8;
+      color: #3d3225;
       font-size: 1.3rem;
       padding: 16px 36px;
-      background: linear-gradient(135deg, #f97b7b, #d93b3b);
-      color: white;
-      margin: 8px 0 5px;
+      border-color: #d1b38c;
+      box-shadow: 0 6px 0 #b2967a, 0 8px 18px rgba(0,0,0,0.08);
+      font-weight: 700;
     }
+
+    .spin-btn:hover {
+      background: #debc93;
+    }
+
+    .spin-btn:active {
+      transform: translateY(3px);
+      box-shadow: 0 3px 0 #b2967a, 0 5px 10px rgba(0,0,0,0.1);
+    }
+
+    .secondary {
+      background: #f3ede7;
+      border-color: #d9cdb9;
+    }
+
     .options-list {
       width: 100%;
       display: flex;
@@ -157,41 +198,50 @@
       margin: 15px 0 5px;
       justify-content: center;
     }
+
     .option-chip {
-      background: rgba(255,255,255,0.1);
-      backdrop-filter: blur(8px);
-      padding: 8px 16px;
+      background: rgba(255, 250, 245, 0.8);
+      backdrop-filter: blur(6px);
+      padding: 8px 18px;
       border-radius: 30px;
-      color: #eee;
+      color: #4d3e2e;
       display: flex;
       align-items: center;
-      gap: 8px;
-      border: 1px solid rgba(255,255,255,0.25);
+      gap: 10px;
+      border: 1px solid #dfd0bb;
       font-size: 0.95rem;
+      font-weight: 500;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.02);
     }
+
     .remove-chip {
       cursor: pointer;
-      color: #ffa5a5;
+      color: #bc8f6b;
       font-weight: bold;
       font-size: 1.2rem;
       line-height: 1;
       transition: 0.2s;
     }
+
     .remove-chip:hover {
-      color: #ff4d4d;
+      color: #a0522d;
       transform: scale(1.2);
     }
+
     .controls {
       display: flex;
       gap: 12px;
       flex-wrap: wrap;
       justify-content: center;
       width: 100%;
+      margin-top: 5px;
     }
+
     .small-note {
-      color: #aaa;
-      margin-top: 10px;
+      color: #b8a48e;
+      margin-top: 12px;
       font-size: 0.8rem;
+      font-weight: 300;
     }
   </style>
 </head>
@@ -216,12 +266,12 @@
     <button class="btn spin-btn" id="spinBtn">🎲 ÇEVİR</button>
     <button class="btn secondary" id="clearBtn">🗑️ Tümünü Sil</button>
   </div>
-  <div class="small-note">✨ En az 2 seçenek ekleyip çarkı çevirebilirsin.</div>
+  <div class="small-note">✨ En az 2 seçenek ekle, çarkı çevir, parçacıkları izle.</div>
 </div>
 
 <script>
   (function() {
-    // --- DOM öğeleri ---
+    // DOM
     const canvas = document.getElementById('wheelCanvas');
     const ctx = canvas.getContext('2d');
     const optionInput = document.getElementById('optionInput');
@@ -231,27 +281,31 @@
     const optionsContainer = document.getElementById('optionsContainer');
     const resultDisplay = document.getElementById('resultDisplay');
 
-    // --- Durum ---
-    let options = [];                 // seçenek metinleri
-    let currentAngle = 0;           // radyan cinsinden çarkın mevcut dönüş açısı
+    // Durum
+    let options = [];
+    let currentAngle = 0;
     let spinning = false;
     let spinVelocity = 0;
     let animationFrame = null;
-    const friction = 0.985;         // sürtünme
+    const friction = 0.985;
     const minVelocity = 0.08;
     const radius = canvas.width / 2;
     const centerX = radius;
     const centerY = radius;
 
-    // --- Renk paleti (dilimler için) ---
-    const colorPalette = [
-      "#FF6B6B", "#4ECDC4", "#FFD93D", "#6C5CE7", "#A8E6CF",
-      "#FF8C42", "#45B7D1", "#F9ED69", "#F08A5D", "#B83B5E",
-      "#3F72AF", "#FFC93C", "#29C7AC", "#D789D7", "#F57170",
-      "#11999E", "#E23E57", "#5D54A4", "#F9A828", "#07689F"
+    // Parçacık sistemi (konfeti / yıldız)
+    let particles = [];
+    const maxParticles = 55;
+
+    // Pastel dilim renkleri (soft palette)
+    const sliceColors = [
+      "#FDE2E4", "#FAD2E1", "#E2ECE9", "#D8E2DC", "#F0E6EF",
+      "#FEE1E8", "#E6E2E6", "#FDE8E0", "#E2F0CB", "#D9E4DD",
+      "#FCE1E4", "#E4D4C8", "#F2DFD7", "#E5DCCD", "#F5E6E8",
+      "#DDE5E8", "#F3E8EE", "#EFE1E6", "#EADCD9", "#F0DDDF"
     ];
 
-    // --- Yardımcı fonksiyonlar ---
+    // --- Yardımcılar ---
     function getSliceAngle() {
       return (Math.PI * 2) / options.length;
     }
@@ -260,16 +314,15 @@
     function drawWheel(angleOffset = currentAngle) {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       if (options.length === 0) {
-        // Boş çark
         ctx.beginPath();
         ctx.arc(centerX, centerY, radius - 5, 0, 2 * Math.PI);
-        ctx.fillStyle = "#2c2c3a";
+        ctx.fillStyle = "#faf5ef";
         ctx.fill();
-        ctx.strokeStyle = "#555";
+        ctx.strokeStyle = "#ddd0be";
         ctx.lineWidth = 3;
         ctx.stroke();
-        ctx.fillStyle = "#aaa";
-        ctx.font = "18px 'Segoe UI'";
+        ctx.fillStyle = "#b8a68e";
+        ctx.font = "300 16px 'Poppins'";
         ctx.textAlign = "center";
         ctx.fillText("Seçenek ekleyin", centerX, centerY);
         return;
@@ -280,15 +333,14 @@
         const startAngle = i * sliceAngle + angleOffset;
         const endAngle = startAngle + sliceAngle;
         
-        // Dilim çizimi
         ctx.beginPath();
         ctx.moveTo(centerX, centerY);
         ctx.arc(centerX, centerY, radius - 4, startAngle, endAngle);
         ctx.closePath();
-        ctx.fillStyle = colorPalette[i % colorPalette.length];
+        ctx.fillStyle = sliceColors[i % sliceColors.length];
         ctx.fill();
-        ctx.strokeStyle = "#222";
-        ctx.lineWidth = 2.5;
+        ctx.strokeStyle = "#d6c8b5";
+        ctx.lineWidth = 2;
         ctx.stroke();
 
         // Metin
@@ -296,43 +348,191 @@
         ctx.translate(centerX, centerY);
         ctx.rotate(startAngle + sliceAngle / 2);
         ctx.textAlign = "center";
-        ctx.fillStyle = "#1a1a1a";
-        ctx.font = "bold 15px 'Segoe UI', 'Poppins'";
-        ctx.shadowColor = "white";
-        ctx.shadowBlur = 4;
+        ctx.fillStyle = "#3b3228";
+        ctx.font = "500 15px 'Poppins'";
+        ctx.shadowColor = "rgba(255,255,255,0.6)";
+        ctx.shadowBlur = 3;
         const text = options[i].length > 14 ? options[i].substring(0, 13) + "…" : options[i];
-        ctx.fillText(text, radius * 0.65, 6);
+        ctx.fillText(text, radius * 0.65, 5);
         ctx.restore();
       }
 
-      // Orta dekor
+      // Orta halka
       ctx.beginPath();
       ctx.arc(centerX, centerY, 18, 0, 2 * Math.PI);
-      ctx.fillStyle = "#1E1E2F";
+      ctx.fillStyle = "#faf5ef";
       ctx.fill();
-      ctx.strokeStyle = "#FFD966";
+      ctx.strokeStyle = "#c9a87c";
       ctx.lineWidth = 3;
       ctx.stroke();
       ctx.beginPath();
       ctx.arc(centerX, centerY, 10, 0, 2 * Math.PI);
-      ctx.fillStyle = "#FFD966";
+      ctx.fillStyle = "#cfb18e";
       ctx.fill();
     }
 
-    // Seçenek listesini güncelle (chip'ler)
+    // Parçacık sistemi
+    function spawnParticle() {
+      if (particles.length > maxParticles) return;
+      const angle = Math.random() * 2 * Math.PI;
+      const speed = 1.2 + Math.random() * 2.5;
+      const size = 3 + Math.random() * 7;
+      const life = 1.0;
+      const types = ['star', 'circle', 'leaf'];
+      const type = types[Math.floor(Math.random() * types.length)];
+      const color = `hsl(${Math.floor(Math.random() * 40 + 30)}, 70%, 75%)`; // altın/pastel tonlar
+      particles.push({
+        x: centerX,
+        y: centerY,
+        vx: Math.cos(angle) * speed,
+        vy: Math.sin(angle) * speed,
+        size: size,
+        life: life,
+        maxLife: life,
+        type: type,
+        color: color,
+      });
+    }
+
+    function updateParticles() {
+      for (let i = particles.length-1; i >= 0; i--) {
+        const p = particles[i];
+        p.x += p.vx;
+        p.y += p.vy;
+        p.vx *= 0.99;
+        p.vy *= 0.99;
+        p.life -= 0.012;
+        if (p.life <= 0 || p.x < -20 || p.x > canvas.width+20 || p.y < -20 || p.y > canvas.height+20) {
+          particles.splice(i,1);
+        }
+      }
+    }
+
+    function drawParticles() {
+      for (let p of particles) {
+        ctx.save();
+        ctx.globalAlpha = p.life * 0.9;
+        ctx.fillStyle = p.color;
+        ctx.shadowColor = p.color;
+        ctx.shadowBlur = 6;
+        if (p.type === 'star') {
+          drawStar(ctx, p.x, p.y, 5, p.size, p.size/2.5);
+        } else if (p.type === 'circle') {
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, p.size/2, 0, 2*Math.PI);
+          ctx.fill();
+        } else if (p.type === 'leaf') {
+          ctx.save();
+          ctx.translate(p.x, p.y);
+          ctx.rotate(Date.now()*0.002);
+          ctx.beginPath();
+          ctx.ellipse(0, 0, p.size/2, p.size/4, 0, 0, Math.PI*2);
+          ctx.fill();
+          ctx.restore();
+        }
+        ctx.restore();
+      }
+    }
+
+    function drawStar(ctx, cx, cy, spikes, outerR, innerR) {
+      let rot = Math.PI / 2 * 3;
+      const step = Math.PI / spikes;
+      ctx.beginPath();
+      for (let i = 0; i < spikes; i++) {
+        let x = cx + Math.cos(rot) * outerR;
+        let y = cy + Math.sin(rot) * outerR;
+        ctx.lineTo(x, y);
+        rot += step;
+
+        x = cx + Math.cos(rot) * innerR;
+        y = cy + Math.sin(rot) * innerR;
+        ctx.lineTo(x, y);
+        rot += step;
+      }
+      ctx.closePath();
+      ctx.fill();
+    }
+
+    // Spin animasyonu
+    function spinAnimation() {
+      if (!spinning) return;
+      
+      // Parçacık üretimi
+      if (Math.random() < 0.45) {
+        spawnParticle();
+      }
+      updateParticles();
+      
+      spinVelocity *= friction;
+      currentAngle = (currentAngle + spinVelocity) % (Math.PI * 2);
+      
+      // Önce çarkı çiz, sonra parçacıkları
+      drawWheel(currentAngle);
+      drawParticles();
+
+      if (spinVelocity < minVelocity) {
+        spinning = false;
+        cancelAnimationFrame(animationFrame);
+        // Durunca biraz daha parçacık ekleyip temizle
+        for (let i=0; i<8; i++) spawnParticle();
+        // kısa süreliğine parçacık animasyonu devam
+        let fadeOutFrames = 0;
+        function fadeParticles() {
+          if (fadeOutFrames > 30 || particles.length === 0) {
+            particles = [];
+            drawWheel(currentAngle);
+            determineResult();
+            return;
+          }
+          updateParticles();
+          drawWheel(currentAngle);
+          drawParticles();
+          fadeOutFrames++;
+          requestAnimationFrame(fadeParticles);
+        }
+        fadeParticles();
+        return;
+      }
+      
+      animationFrame = requestAnimationFrame(spinAnimation);
+    }
+
+    function determineResult() {
+      if (options.length === 0) {
+        resultDisplay.textContent = "🤷‍♂️ Seçenek yok";
+        return;
+      }
+      const sliceAngle = getSliceAngle();
+      const pointerAngle = (Math.PI * 3 / 2) % (Math.PI * 2);
+      let rawAngle = (pointerAngle - currentAngle + Math.PI * 2) % (Math.PI * 2);
+      let index = Math.floor(rawAngle / sliceAngle) % options.length;
+      resultDisplay.textContent = `✨ Karar: ${options[index]} ✨`;
+    }
+
+    function startSpin() {
+      if (spinning) return;
+      if (options.length < 2) {
+        alert("Lütfen en az 2 seçenek ekleyin.");
+        return;
+      }
+      spinVelocity = 0.35 + Math.random() * 0.65;
+      spinning = true;
+      resultDisplay.textContent = "🎡 Çark dönüyor...";
+      // İlk parçacık patlaması
+      for (let i=0; i<10; i++) spawnParticle();
+      if (animationFrame) cancelAnimationFrame(animationFrame);
+      animationFrame = requestAnimationFrame(spinAnimation);
+    }
+
+    // Seçenek yönetimi (öncekiyle aynı)
     function renderOptionsList() {
       optionsContainer.innerHTML = '';
       options.forEach((opt, index) => {
         const chip = document.createElement('div');
         chip.className = 'option-chip';
-        chip.innerHTML = `
-          <span>${opt}</span>
-          <span class="remove-chip" data-index="${index}">✖</span>
-        `;
+        chip.innerHTML = `<span>${opt}</span><span class="remove-chip" data-index="${index}">✖</span>`;
         optionsContainer.appendChild(chip);
       });
-
-      // Silme butonlarına olay ekle
       document.querySelectorAll('.remove-chip').forEach(btn => {
         btn.addEventListener('click', (e) => {
           const idx = parseInt(e.target.getAttribute('data-index'));
@@ -346,85 +546,19 @@
       options.splice(index, 1);
       renderOptionsList();
       drawWheel(currentAngle);
-      if (options.length < 2) {
-        resultDisplay.textContent = "⚠️ En az 2 seçenek gerekli";
-      } else {
-        resultDisplay.textContent = "🎯 Çark güncellendi";
-      }
+      resultDisplay.textContent = options.length < 2 ? "⚠️ En az 2 seçenek gerekli" : "🎯 Çark güncellendi";
     }
 
     function addOption(optionText) {
       const trimmed = optionText.trim();
-      if (trimmed === '') {
-        alert("Lütfen geçerli bir seçenek yaz.");
-        return;
-      }
-      if (options.includes(trimmed)) {
-        alert("Bu seçenek zaten var.");
-        return;
-      }
-      if (options.length >= 30) {
-        alert("En fazla 30 seçenek ekleyebilirsin.");
-        return;
-      }
+      if (trimmed === '') { alert("Lütfen geçerli bir seçenek yaz."); return; }
+      if (options.includes(trimmed)) { alert("Bu seçenek zaten var."); return; }
+      if (options.length >= 30) { alert("En fazla 30 seçenek."); return; }
       options.push(trimmed);
       renderOptionsList();
       drawWheel(currentAngle);
       optionInput.value = '';
-      if (options.length >= 2) {
-        resultDisplay.textContent = "✅ Çark hazır!";
-      }
-    }
-
-    // Çarkı döndürme animasyonu
-    function spinAnimation() {
-      if (!spinning) return;
-      
-      spinVelocity *= friction;
-      currentAngle = (currentAngle + spinVelocity) % (Math.PI * 2);
-      drawWheel(currentAngle);
-
-      if (spinVelocity < minVelocity) {
-        // Durdu
-        spinning = false;
-        cancelAnimationFrame(animationFrame);
-        determineResult();
-        return;
-      }
-      
-      animationFrame = requestAnimationFrame(spinAnimation);
-    }
-
-    function determineResult() {
-      if (options.length === 0) {
-        resultDisplay.textContent = "🤷‍♂️ Seçenek yok";
-        return;
-      }
-      const sliceAngle = getSliceAngle();
-      // İşaretçi yukarıda ( -PI/2 yani 270° veya -90°). Normalize açı.
-      // Çark açısı currentAngle, dilimlerin başlangıcı currentAngle'a göre kaymış.
-      // İşaretçi yönü: canvas koordinat sisteminde yukarısı -PI/2 radyan.
-      const pointerAngle = (Math.PI * 3 / 2) % (Math.PI * 2); // 270 derece
-      // Hangi dilimin işaretçiye denk geldiğini bul.
-      let rawAngle = (pointerAngle - currentAngle + Math.PI * 2) % (Math.PI * 2);
-      let index = Math.floor(rawAngle / sliceAngle) % options.length;
-      const selected = options[index];
-      resultDisplay.textContent = `✨ Karar: ${selected} ✨`;
-      // Görsel vurgu için sonucu console'a da yazdık (isteğe bağlı)
-    }
-
-    function startSpin() {
-      if (spinning) return;
-      if (options.length < 2) {
-        alert("Lütfen en az 2 seçenek ekleyin.");
-        return;
-      }
-      // Rastgele başlangıç hızı (0.3 ile 0.9 radyan/frame arası)
-      spinVelocity = 0.35 + Math.random() * 0.65;
-      spinning = true;
-      resultDisplay.textContent = "🎡 Çark dönüyor...";
-      if (animationFrame) cancelAnimationFrame(animationFrame);
-      animationFrame = requestAnimationFrame(spinAnimation);
+      if (options.length >= 2) resultDisplay.textContent = "✅ Çark hazır!";
     }
 
     function clearAllOptions() {
@@ -436,29 +570,14 @@
       resultDisplay.textContent = "🧹 Tüm seçenekler silindi";
     }
 
-    // --- Olay dinleyicileri ---
-    addBtn.addEventListener('click', () => {
-      addOption(optionInput.value);
-    });
-
-    optionInput.addEventListener('keypress', (e) => {
-      if (e.key === 'Enter') {
-        addOption(optionInput.value);
-      }
-    });
-
+    // Event listeners
+    addBtn.addEventListener('click', () => addOption(optionInput.value));
+    optionInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') addOption(optionInput.value); });
     spinBtn.addEventListener('click', startSpin);
-
     clearBtn.addEventListener('click', clearAllOptions);
+    canvas.addEventListener('click', () => { if (!spinning && options.length >= 2) startSpin(); });
 
-    // Canvas tıklamasıyla da çevirme (opsiyonel)
-    canvas.addEventListener('click', () => {
-      if (!spinning && options.length >= 2) {
-        startSpin();
-      }
-    });
-
-    // Başlangıç render
+    // Başlangıç
     drawWheel(0);
     renderOptionsList();
     resultDisplay.textContent = "👋 Seçenek ekleyip başla!";
