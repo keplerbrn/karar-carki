@@ -1,604 +1,671 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-  <title>⚡ Karar Çarkı</title>
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&display=swap" rel="stylesheet">
-  <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Karnaval Çarkı</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Quicksand:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --gold: #f4c542;
+    --gold-dark: #b8860b;
+    --stripe-red: #c62828;
+    --stripe-red-2: #e53935;
+  }
+  *{box-sizing:border-box;}
+  html,body{
+    margin:0;padding:0;height:100%;overflow:hidden;
+    font-family:'Quicksand',sans-serif;
+  }
+  body{
+    display:flex;align-items:center;justify-content:center;
+    background:
+      repeating-linear-gradient(
+        135deg,
+        var(--stripe-red) 0 28px,
+        var(--stripe-red-2) 28px 56px,
+        #fff5e6 56px 84px,
+        #fff 84px 112px
+      );
+    background-size: 158px 158px;
+    animation: driftStripes 40s linear infinite;
+    position:relative;
+  }
+  @keyframes driftStripes{
+    0%{background-position:0 0;}
+    100%{background-position:1000px 1000px;}
+  }
+  body::before{
+    content:"";
+    position:absolute;inset:0;
+    background:radial-gradient(ellipse at center, rgba(0,0,0,0) 0%, rgba(0,0,0,0.35) 100%);
+    pointer-events:none;
+  }
 
-    body {
-      font-family: 'Poppins', sans-serif;
-      background: #0e0b1f;
-      background-image: 
-        radial-gradient(circle at 20% 30%, rgba(120, 40, 200, 0.2) 0%, transparent 50%),
-        radial-gradient(circle at 80% 70%, rgba(0, 200, 200, 0.15) 0%, transparent 50%),
-        radial-gradient(circle at 40% 80%, rgba(255, 50, 120, 0.2) 0%, transparent 50%);
-      min-height: 100vh;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      padding: 20px;
-      margin: 0;
-      overflow-x: hidden;
-    }
+  #confetti-canvas{
+    position:fixed;inset:0;width:100vw;height:100vh;
+    pointer-events:none;z-index:50;
+  }
 
-    /* Arka plana hafif hareketli grid efekti */
-    body::before {
-      content: "";
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background-image: 
-        linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
-      background-size: 40px 40px;
-      pointer-events: none;
-      z-index: 0;
-    }
+  .app{
+    position:relative;
+    z-index:2;
+    width:340px;
+    max-height:96vh;
+    background:rgba(255,255,255,0.14);
+    backdrop-filter:blur(14px);
+    -webkit-backdrop-filter:blur(14px);
+    border:2px solid rgba(244,197,66,0.65);
+    border-radius:26px;
+    box-shadow:0 8px 32px rgba(0,0,0,0.35), inset 0 0 24px rgba(255,255,255,0.08);
+    padding:14px 16px 16px;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:8px;
+  }
 
-    .container {
-      position: relative;
-      z-index: 1;
-      max-width: 650px;
-      width: 100%;
-      background: rgba(20, 15, 35, 0.75);
-      backdrop-filter: blur(20px);
-      -webkit-backdrop-filter: blur(20px);
-      border-radius: 48px;
-      padding: 30px 25px 35px;
-      border: 1px solid rgba(255, 255, 255, 0.15);
-      box-shadow: 0 30px 50px rgba(0,0,0,0.7), 0 0 40px rgba(180, 50, 255, 0.25), 0 0 10px rgba(0, 255, 255, 0.2);
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-    }
+  h1{
+    font-family:'Fredoka One',cursive;
+    color:#fff;
+    font-size:15px;
+    letter-spacing:0.5px;
+    margin:2px 0 0;
+    text-shadow:0 2px 6px rgba(0,0,0,0.45), 0 0 14px rgba(244,197,66,0.5);
+    text-align:center;
+  }
 
-    h1 {
-      font-weight: 800;
-      font-size: 2.6rem;
-      letter-spacing: 2px;
-      margin-bottom: 15px;
-      background: linear-gradient(135deg, #ff6ec7, #00f0ff);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-      filter: drop-shadow(0 0 18px #ff3a9e);
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
+  .wheel-wrap{
+    position:relative;
+    width:200px;
+    height:200px;
+    flex-shrink:0;
+    margin:2px 0 4px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+  }
 
-    .wheel-wrapper {
-      position: relative;
-      margin: 10px 0 20px;
-      filter: drop-shadow(0 0 25px rgba(200, 50, 255, 0.6));
-    }
+  #pointer{
+    position:absolute;
+    top:-2px;
+    left:50%;
+    transform-origin:50% 0%;
+    transform:translateX(-50%) rotate(0deg);
+    width:0;height:0;
+    border-left:11px solid transparent;
+    border-right:11px solid transparent;
+    border-top:20px solid var(--gold);
+    filter:drop-shadow(0 2px 3px rgba(0,0,0,0.5));
+    z-index:6;
+    transition:none;
+  }
+  #pointer.tick{
+    animation:tickBounce 0.09s ease-out;
+  }
+  @keyframes tickBounce{
+    0%{transform:translateX(-50%) rotate(0deg) scale(1);}
+    45%{transform:translateX(-50%) rotate(-8deg) translateY(3px) scale(0.94);}
+    100%{transform:translateX(-50%) rotate(0deg) scale(1);}
+  }
 
-    canvas {
-      display: block;
-      margin: 0 auto;
-      border-radius: 50%;
-      background: #1c1635;
-      box-shadow: 0 0 50px rgba(150, 0, 255, 0.5), 0 0 0 5px rgba(255,255,255,0.08);
-    }
+  #wheelCanvas{
+    border-radius:50%;
+    cursor:pointer;
+    box-shadow:0 0 0 4px var(--gold-dark), 0 0 0 7px var(--gold), 0 6px 22px rgba(0,0,0,0.5);
+    background:#222;
+    touch-action:manipulation;
+  }
 
-    .pointer {
-      position: absolute;
-      top: -20px;
-      left: 50%;
-      transform: translateX(-50%);
-      font-size: 2.8rem;
-      filter: drop-shadow(0 0 15px #ffdd44);
-      z-index: 10;
-      color: #ffe600;
-      text-shadow: 0 0 25px #ffb300;
-      line-height: 1;
-    }
+  .center-ornament{
+    position:absolute;
+    width:26px;height:26px;
+    border-radius:50%;
+    left:50%;top:50%;
+    transform:translate(-50%,-50%);
+    background:
+      radial-gradient(circle at 35% 30%, #fff8dd 0%, var(--gold) 35%, var(--gold-dark) 70%, #7a5a00 100%);
+    box-shadow:0 0 0 2px #7a5a00, 0 0 10px rgba(244,197,66,0.9), 0 2px 4px rgba(0,0,0,0.5);
+    z-index:5;
+    pointer-events:none;
+  }
+  .center-ornament::after{
+    content:"";
+    position:absolute;
+    inset:8px;
+    border-radius:50%;
+    background:radial-gradient(circle at 40% 35%, #fff, var(--gold) 60%);
+    box-shadow:inset 0 0 3px rgba(0,0,0,0.4);
+  }
 
-    .result-area {
-      background: rgba(10, 5, 25, 0.7);
-      backdrop-filter: blur(16px);
-      border-radius: 60px;
-      padding: 16px 32px;
-      margin: 15px 0 20px;
-      font-size: 1.7rem;
-      font-weight: 700;
-      color: #fff3c9;
-      border: 1px solid rgba(255, 215, 0, 0.5);
-      box-shadow: 0 0 30px rgba(255, 180, 0, 0.4);
-      text-align: center;
-      min-height: 70px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      width: 100%;
-      text-shadow: 0 0 10px #ffaa00;
-    }
+  .slogan{
+    font-family:'Fredoka One',cursive;
+    color:var(--gold);
+    font-size:13px;
+    text-shadow:0 1px 4px rgba(0,0,0,0.6);
+    margin:0 0 2px;
+    text-align:center;
+  }
 
-    .input-section {
-      display: flex;
-      gap: 10px;
-      width: 100%;
-      margin: 10px 0 5px;
-    }
+  #result{
+    min-height:22px;
+    font-family:'Fredoka One',cursive;
+    font-size:16px;
+    color:#fff;
+    text-align:center;
+    text-shadow:0 0 8px rgba(244,197,66,0.0);
+    transform:scale(1);
+    transition:transform 0.25s ease, text-shadow 0.25s ease, color 0.25s ease;
+  }
+  #result.pop{
+    color:var(--gold);
+    transform:scale(1.28);
+    text-shadow:0 0 18px rgba(244,197,66,0.95), 0 0 34px rgba(244,197,66,0.6);
+  }
 
-    #optionInput {
-      flex: 1;
-      padding: 15px 20px;
-      border-radius: 50px;
-      border: 1px solid rgba(255,255,255,0.2);
-      background: rgba(255,255,255,0.08);
-      color: #fff;
-      font-size: 1rem;
-      font-family: 'Poppins', sans-serif;
-      outline: none;
-      transition: 0.3s;
-      backdrop-filter: blur(5px);
-    }
+  .controls-row{
+    display:flex;
+    gap:6px;
+    width:100%;
+  }
+  #optionInput{
+    flex:1;
+    min-width:0;
+    padding:8px 10px;
+    border-radius:12px;
+    border:2px solid rgba(244,197,66,0.5);
+    background:rgba(255,255,255,0.85);
+    font-family:'Quicksand',sans-serif;
+    font-weight:600;
+    font-size:13px;
+    outline:none;
+    color:#333;
+  }
+  #optionInput:focus{
+    border-color:var(--gold);
+    box-shadow:0 0 0 2px rgba(244,197,66,0.4);
+  }
 
-    #optionInput::placeholder {
-      color: #a9a4c0;
-      font-weight: 300;
-    }
+  button{
+    font-family:'Fredoka One',cursive;
+    border:none;
+    cursor:pointer;
+    border-radius:12px;
+    letter-spacing:0.4px;
+    transition:transform 0.12s ease, filter 0.12s ease;
+  }
+  button:active{transform:scale(0.94);}
+  button:disabled{opacity:0.45;cursor:not-allowed;}
 
-    #optionInput:focus {
-      border-color: #ff6ec7;
-      box-shadow: 0 0 20px rgba(255, 100, 200, 0.5);
-      background: rgba(255,255,255,0.12);
-    }
+  #addBtn{
+    background:linear-gradient(180deg,#4ecdc4,#2fa79c);
+    color:#fff;
+    padding:0 14px;
+    font-size:18px;
+    box-shadow:0 3px 0 #1e756c;
+  }
 
-    .btn {
-      font-family: 'Poppins', sans-serif;
-      border: none;
-      border-radius: 50px;
-      padding: 15px 26px;
-      font-weight: 700;
-      font-size: 1rem;
-      cursor: pointer;
-      transition: all 0.2s ease;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      background: rgba(255,255,255,0.07);
-      color: #e0d9ff;
-      backdrop-filter: blur(8px);
-      border: 1px solid rgba(255,255,255,0.2);
-      letter-spacing: 0.5px;
-      text-transform: uppercase;
-      box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-    }
+  .options-list{
+    width:100%;
+    max-height:78px;
+    overflow-y:auto;
+    display:flex;
+    flex-wrap:wrap;
+    gap:5px;
+    padding:2px 1px;
+  }
+  .options-list::-webkit-scrollbar{width:6px;}
+  .options-list::-webkit-scrollbar-thumb{background:rgba(244,197,66,0.6);border-radius:4px;}
 
-    .btn:hover {
-      background: rgba(255,255,255,0.15);
-      border-color: rgba(255,255,255,0.4);
-      box-shadow: 0 0 20px rgba(200, 100, 255, 0.5);
-    }
+  .chip{
+    display:flex;
+    align-items:center;
+    gap:5px;
+    background:rgba(255,255,255,0.85);
+    border-radius:999px;
+    padding:4px 6px 4px 10px;
+    font-size:11.5px;
+    font-weight:600;
+    color:#333;
+    max-width:150px;
+  }
+  .chip span{
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    max-width:110px;
+  }
+  .chip .del{
+    background:#e53935;
+    color:#fff;
+    width:16px;height:16px;
+    border-radius:50%;
+    display:flex;align-items:center;justify-content:center;
+    font-size:10px;
+    line-height:1;
+    cursor:pointer;
+    flex-shrink:0;
+    font-family:'Quicksand',sans-serif;
+    font-weight:700;
+  }
 
-    .btn:active {
-      transform: scale(0.96);
-    }
+  .bottom-row{
+    display:flex;
+    gap:8px;
+    width:100%;
+    margin-top:2px;
+  }
+  #spinBtn{
+    flex:2;
+    padding:10px 0;
+    font-size:15px;
+    background:linear-gradient(180deg,#ffd93d,#f4a300);
+    color:#5c3d00;
+    box-shadow:0 4px 0 #a86e00;
+  }
+  #spinBtn:hover:not(:disabled){filter:brightness(1.06);}
+  #resetBtn{
+    flex:1;
+    padding:10px 0;
+    font-size:12px;
+    background:linear-gradient(180deg,#ff6b6b,#e53935);
+    color:#fff;
+    box-shadow:0 4px 0 #a41f1f;
+  }
 
-    .spin-btn {
-      background: linear-gradient(135deg, #ff416c, #ff4b8c);
-      color: white;
-      font-size: 1.4rem;
-      padding: 18px 40px;
-      font-weight: 800;
-      border: none;
-      box-shadow: 0 10px 30px rgba(255, 65, 108, 0.5), 0 0 30px #ff2e6d;
-      text-shadow: 0 2px 10px black;
-    }
-
-    .spin-btn:hover {
-      background: linear-gradient(135deg, #ff5e84, #ff3477);
-      box-shadow: 0 15px 35px rgba(255, 50, 100, 0.7), 0 0 40px #ff3366;
-    }
-
-    .secondary {
-      background: rgba(255,255,255,0.05);
-      border: 1px solid rgba(255,255,255,0.25);
-    }
-
-    .options-list {
-      width: 100%;
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-      margin: 15px 0 5px;
-      justify-content: center;
-    }
-
-    .option-chip {
-      background: rgba(255,255,255,0.08);
-      backdrop-filter: blur(8px);
-      padding: 8px 20px;
-      border-radius: 30px;
-      color: #f0e6ff;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      border: 1px solid rgba(255,255,255,0.25);
-      font-size: 0.95rem;
-      font-weight: 600;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.2);
-    }
-
-    .remove-chip {
-      cursor: pointer;
-      color: #ff7ea0;
-      font-weight: bold;
-      font-size: 1.2rem;
-      transition: 0.2s;
-    }
-
-    .remove-chip:hover {
-      color: #ff3c6a;
-      transform: scale(1.3);
-      text-shadow: 0 0 10px red;
-    }
-
-    .controls {
-      display: flex;
-      gap: 15px;
-      flex-wrap: wrap;
-      justify-content: center;
-      width: 100%;
-      margin-top: 10px;
-    }
-
-    .small-note {
-      color: #9b96b8;
-      margin-top: 14px;
-      font-size: 0.8rem;
-      font-weight: 400;
-      text-shadow: 0 0 8px black;
-    }
-  </style>
+  .count{
+    font-size:10.5px;
+    color:rgba(255,255,255,0.8);
+    align-self:flex-end;
+    margin:-4px 2px 0 0;
+    font-weight:600;
+  }
+</style>
 </head>
 <body>
-<div class="container">
-  <h1>⚡ KARAR ÇARKI ⚡</h1>
-  <div class="wheel-wrapper">
-    <div class="pointer">▼</div>
-    <canvas id="wheelCanvas" width="420" height="420"></canvas>
+
+<canvas id="confetti-canvas"></canvas>
+
+<div class="app">
+  <h1>🎪 Karnaval Çarkı</h1>
+
+  <div class="wheel-wrap">
+    <div id="pointer"></div>
+    <canvas id="wheelCanvas" width="400" height="400" style="width:200px;height:200px;"></canvas>
+    <div class="center-ornament"></div>
   </div>
 
-  <div class="result-area" id="resultDisplay">🤘 Çevirmeye hazır!</div>
+  <p class="slogan">Kararsız mısın? Çevir!</p>
+  <div id="result"></div>
 
-  <div class="input-section">
-    <input type="text" id="optionInput" placeholder="Seçenek ekle... (örn: Parti 🎉)" maxlength="35">
-    <button class="btn" id="addBtn">➕</button>
+  <div class="controls-row">
+    <input id="optionInput" type="text" placeholder="Seçenek ekle..." maxlength="40">
+    <button id="addBtn" title="Ekle">+</button>
   </div>
+  <div class="count" id="countLabel">0 / 30</div>
 
-  <div class="options-list" id="optionsContainer"></div>
+  <div class="options-list" id="optionsList"></div>
 
-  <div class="controls">
-    <button class="btn spin-btn" id="spinBtn">🎰 ÇEVİR</button>
-    <button class="btn secondary" id="clearBtn">🗑️ SIFIRLA</button>
+  <div class="bottom-row">
+    <button id="spinBtn">ÇEVİR</button>
+    <button id="resetBtn">Sıfırla</button>
   </div>
-  <div class="small-note">⚡ 2+ seçenek ekle, çarkı çevir, kararını yakala!</div>
 </div>
 
 <script>
-  (function() {
-    const canvas = document.getElementById('wheelCanvas');
-    const ctx = canvas.getContext('2d');
-    const optionInput = document.getElementById('optionInput');
-    const addBtn = document.getElementById('addBtn');
-    const spinBtn = document.getElementById('spinBtn');
-    const clearBtn = document.getElementById('clearBtn');
-    const optionsContainer = document.getElementById('optionsContainer');
-    const resultDisplay = document.getElementById('resultDisplay');
+(function(){
+  const MAX_OPTIONS = 30;
+  const PALETTE = ['#FF3CAC','#784BA0','#2B86C5','#FF6B6B','#4ECDC4','#FFD93D',
+                    '#6BCB77','#FF9F1C','#C77DFF','#00F5D4','#F72585','#7209B7',
+                    '#3A86FF','#FFBE0B','#FB5607','#8338EC','#06FFA5','#FF006E',
+                    '#FFAFCC','#A0C4FF'];
 
-    let options = [];
-    let currentAngle = 0;
-    let spinning = false;
-    let spinVelocity = 0;
-    let animationFrame = null;
-    // Dinamik friction: hız yüksekken hızlı yavaşla, düşükken yavaş yavaşla (heyecan)
-    const frictionFast = 0.983;
-    const frictionSlow = 0.996;
-    const lowSpeedThreshold = 0.12; // rad/frame altına düşünce sürtünme azalıyor
-    const minVelocity = 0.012;
-    const radius = canvas.width / 2;
-    const centerX = radius;
-    const centerY = radius;
+  let options = [];
 
-    // Parçacık sistemi (neon)
-    let particles = [];
-    const maxParticles = 70;
+  const optionInput = document.getElementById('optionInput');
+  const addBtn = document.getElementById('addBtn');
+  const optionsList = document.getElementById('optionsList');
+  const countLabel = document.getElementById('countLabel');
+  const spinBtn = document.getElementById('spinBtn');
+  const resetBtn = document.getElementById('resetBtn');
+  const resultEl = document.getElementById('result');
+  const pointerEl = document.getElementById('pointer');
 
-    // Neon dilim renkleri (göz alıcı)
-    const neonColors = [
-      "#FF4D6D", "#FF6EC7", "#FFB347", "#FFD93D", "#A0E7E5",
-      "#00C9B6", "#6C5CE7", "#A855F7", "#F472B6", "#34D399",
-      "#F97316", "#FACC15", "#38BDF8", "#818CF8", "#FB7185",
-      "#4ADE80", "#F43F5E", "#C084FC", "#FBBF24", "#2DD4BF"
-    ];
+  const wheelCanvas = document.getElementById('wheelCanvas');
+  const wctx = wheelCanvas.getContext('2d');
+  const W = wheelCanvas.width, H = wheelCanvas.height;
+  const CX = W/2, CY = H/2;
+  const RADIUS = W/2 - 14;
 
-    function getSliceAngle() {
-      return (Math.PI * 2) / options.length;
-    }
+  // ---------- Confetti ----------
+  const confettiCanvas = document.getElementById('confetti-canvas');
+  const cctx = confettiCanvas.getContext('2d');
+  function resizeConfetti(){
+    confettiCanvas.width = window.innerWidth;
+    confettiCanvas.height = window.innerHeight;
+  }
+  resizeConfetti();
+  window.addEventListener('resize', resizeConfetti);
 
-    // Çark çizimi (neon efektli)
-    function drawWheel(angleOffset = currentAngle) {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      if (options.length === 0) {
-        ctx.beginPath();
-        ctx.arc(centerX, centerY, radius - 5, 0, 2 * Math.PI);
-        ctx.fillStyle = "#1b1638";
-        ctx.fill();
-        ctx.strokeStyle = "#4a3f7a";
-        ctx.lineWidth = 3;
-        ctx.stroke();
-        ctx.fillStyle = "#8882aa";
-        ctx.font = "600 18px 'Poppins'";
-        ctx.textAlign = "center";
-        ctx.fillText("Seçenek ekle ⚡", centerX, centerY);
-        return;
-      }
-
-      const sliceAngle = getSliceAngle();
-      for (let i = 0; i < options.length; i++) {
-        const startAngle = i * sliceAngle + angleOffset;
-        const endAngle = startAngle + sliceAngle;
-        
-        ctx.beginPath();
-        ctx.moveTo(centerX, centerY);
-        ctx.arc(centerX, centerY, radius - 6, startAngle, endAngle);
-        ctx.closePath();
-        const gradient = ctx.createLinearGradient(centerX - 50, centerY - 50, centerX + 50, centerY + 50);
-        gradient.addColorStop(0, neonColors[i % neonColors.length]);
-        gradient.addColorStop(1, neonColors[(i + 1) % neonColors.length]);
-        ctx.fillStyle = gradient;
-        ctx.fill();
-        ctx.strokeStyle = "#ffffff";
-        ctx.lineWidth = 2.5;
-        ctx.shadowColor = neonColors[i % neonColors.length];
-        ctx.shadowBlur = 15;
-        ctx.stroke();
-        ctx.shadowColor = "transparent";
-        ctx.shadowBlur = 0;
-
-        // Metin
-        ctx.save();
-        ctx.translate(centerX, centerY);
-        ctx.rotate(startAngle + sliceAngle / 2);
-        ctx.textAlign = "center";
-        ctx.fillStyle = "#ffffff";
-        ctx.font = "bold 16px 'Poppins'";
-        ctx.shadowColor = "#000";
-        ctx.shadowBlur = 8;
-        const text = options[i].length > 13 ? options[i].substring(0, 12) + "…" : options[i];
-        ctx.fillText(text, radius * 0.67, 6);
-        ctx.restore();
-      }
-
-      // Merkez dekor (parlayan)
-      ctx.beginPath();
-      ctx.arc(centerX, centerY, 24, 0, 2 * Math.PI);
-      const centerGrad = ctx.createRadialGradient(centerX, centerY, 5, centerX, centerY, 24);
-      centerGrad.addColorStop(0, "#ffffff");
-      centerGrad.addColorStop(0.5, "#ffe484");
-      centerGrad.addColorStop(1, "#b45389");
-      ctx.fillStyle = centerGrad;
-      ctx.fill();
-      ctx.strokeStyle = "#fff";
-      ctx.lineWidth = 2;
-      ctx.stroke();
-      ctx.beginPath();
-      ctx.arc(centerX, centerY, 10, 0, 2 * Math.PI);
-      ctx.fillStyle = "#ffffff";
-      ctx.fill();
-    }
-
-    // Parçacık işlemleri
-    function spawnParticle() {
-      if (particles.length > maxParticles) return;
-      const angle = Math.random() * 2 * Math.PI;
-      const speed = 1.8 + Math.random() * 3.5;
-      const size = 3 + Math.random() * 8;
-      const life = 1.0;
-      const colors = ["#ff4d6d", "#00f0ff", "#ffb800", "#d946ef", "#34d399", "#facc15", "#ff6ec7"];
-      const color = colors[Math.floor(Math.random() * colors.length)];
+  let particles = [];
+  function spawnConfetti(count, originX, originY, burst){
+    for(let i=0;i<count;i++){
+      const angle = Math.random()*Math.PI*2;
+      const speed = burst ? (2+Math.random()*6) : (1+Math.random()*2.5);
       particles.push({
-        x: centerX,
-        y: centerY,
-        vx: Math.cos(angle) * speed,
-        vy: Math.sin(angle) * speed,
-        size: size,
-        life: life,
-        maxLife: life,
-        color: color,
-        type: Math.random() < 0.4 ? 'star' : 'circle'
+        x: originX, y: originY,
+        vx: Math.cos(angle)*speed,
+        vy: Math.sin(angle)*speed - (burst?2:0.5),
+        rot: Math.random()*Math.PI*2,
+        vrot: (Math.random()-0.5)*0.3,
+        size: 4+Math.random()*5,
+        color: PALETTE[Math.floor(Math.random()*PALETTE.length)],
+        shape: Math.random()<0.5 ? 'star':'circle',
+        life: 0,
+        maxLife: 70+Math.random()*50
       });
     }
+  }
 
-    function updateParticles() {
-      for (let i = particles.length-1; i >= 0; i--) {
-        const p = particles[i];
-        p.x += p.vx;
-        p.y += p.vy;
-        p.vx *= 0.99;
-        p.vy *= 0.99;
-        p.life -= 0.015;
-        if (p.life <= 0 || p.x < -30 || p.x > canvas.width+30 || p.y < -30 || p.y > canvas.height+30) {
-          particles.splice(i,1);
-        }
+  function drawStar(ctx,x,y,r,rot){
+    ctx.save();
+    ctx.translate(x,y);
+    ctx.rotate(rot);
+    ctx.beginPath();
+    for(let i=0;i<5;i++){
+      const a1 = (i*4*Math.PI)/5 - Math.PI/2;
+      const px = Math.cos(a1)*r, py = Math.sin(a1)*r;
+      if(i===0) ctx.moveTo(px,py); else ctx.lineTo(px,py);
+    }
+    ctx.closePath();
+    ctx.fill();
+    ctx.restore();
+  }
+
+  function updateConfetti(){
+    cctx.clearRect(0,0,confettiCanvas.width,confettiCanvas.height);
+    particles = particles.filter(p=>p.life < p.maxLife);
+    for(const p of particles){
+      p.x += p.vx;
+      p.y += p.vy;
+      p.vy += 0.06;
+      p.rot += p.vrot;
+      p.life++;
+      const alpha = Math.max(0, 1 - p.life/p.maxLife);
+      cctx.globalAlpha = alpha;
+      cctx.fillStyle = p.color;
+      if(p.shape === 'star'){
+        drawStar(cctx, p.x, p.y, p.size, p.rot);
+      } else {
+        cctx.beginPath();
+        cctx.arc(p.x,p.y,p.size*0.6,0,Math.PI*2);
+        cctx.fill();
       }
     }
+    cctx.globalAlpha = 1;
+    requestAnimationFrame(updateConfetti);
+  }
+  updateConfetti();
 
-    function drawParticles() {
-      for (let p of particles) {
-        ctx.save();
-        ctx.globalAlpha = p.life * 0.85;
-        ctx.fillStyle = p.color;
-        ctx.shadowColor = p.color;
-        ctx.shadowBlur = 12;
-        if (p.type === 'star') {
-          drawStar(ctx, p.x, p.y, 5, p.size, p.size/2.5);
-        } else {
-          ctx.beginPath();
-          ctx.arc(p.x, p.y, p.size/2, 0, 2*Math.PI);
-          ctx.fill();
-        }
-        ctx.restore();
-      }
-    }
-
-    function drawStar(ctx, cx, cy, spikes, outerR, innerR) {
-      let rot = Math.PI / 2 * 3;
-      const step = Math.PI / spikes;
-      ctx.beginPath();
-      for (let i = 0; i < spikes; i++) {
-        let x = cx + Math.cos(rot) * outerR;
-        let y = cy + Math.sin(rot) * outerR;
-        ctx.lineTo(x, y);
-        rot += step;
-        x = cx + Math.cos(rot) * innerR;
-        y = cy + Math.sin(rot) * innerR;
-        ctx.lineTo(x, y);
-        rot += step;
-      }
-      ctx.closePath();
-      ctx.fill();
-    }
-
-    // Dinamik friction ile spin animasyonu
-    function spinAnimation() {
-      if (!spinning) return;
-      
-      // Parçacık üret
-      if (Math.random() < 0.6) spawnParticle();
-      updateParticles();
-      
-      // Dinamik friction: hıza göre
-      let currentFriction = (spinVelocity < lowSpeedThreshold) ? frictionSlow : frictionFast;
-      spinVelocity *= currentFriction;
-      currentAngle = (currentAngle + spinVelocity) % (Math.PI * 2);
-      
-      drawWheel(currentAngle);
-      drawParticles();
-
-      if (spinVelocity < minVelocity) {
-        spinning = false;
-        cancelAnimationFrame(animationFrame);
-        // Durma anında ekstra parçacık patlaması
-        for (let i=0; i<15; i++) spawnParticle();
-        let fadeFrames = 0;
-        function fadeOutParticles() {
-          if (fadeFrames > 40 || particles.length === 0) {
-            particles = [];
-            drawWheel(currentAngle);
-            determineResult();
-            return;
-          }
-          updateParticles();
-          drawWheel(currentAngle);
-          drawParticles();
-          fadeFrames++;
-          requestAnimationFrame(fadeOutParticles);
-        }
-        fadeOutParticles();
-        return;
-      }
-      
-      animationFrame = requestAnimationFrame(spinAnimation);
-    }
-
-    function determineResult() {
-      if (options.length === 0) {
-        resultDisplay.textContent = "🤷 Seçenek yok";
-        return;
-      }
-      const sliceAngle = getSliceAngle();
-      const pointerAngle = (Math.PI * 3 / 2) % (Math.PI * 2);
-      let rawAngle = (pointerAngle - currentAngle + Math.PI * 2) % (Math.PI * 2);
-      let index = Math.floor(rawAngle / sliceAngle) % options.length;
-      resultDisplay.textContent = `🎉 ${options[index]} 🎉`;
-    }
-
-    function startSpin() {
-      if (spinning) return;
-      if (options.length < 2) {
-        alert("⚡ En az 2 seçenek gerekli!");
-        return;
-      }
-      // Yüksek başlangıç hızı: 0.7 - 1.2 rad/frame
-      spinVelocity = 0.75 + Math.random() * 0.55;
-      spinning = true;
-      resultDisplay.textContent = "🌀 Dönüyor...";
-      for (let i=0; i<12; i++) spawnParticle();
-      if (animationFrame) cancelAnimationFrame(animationFrame);
-      animationFrame = requestAnimationFrame(spinAnimation);
-    }
-
-    // Seçenek yönetimi
-    function renderOptionsList() {
-      optionsContainer.innerHTML = '';
-      options.forEach((opt, index) => {
-        const chip = document.createElement('div');
-        chip.className = 'option-chip';
-        chip.innerHTML = `<span>${opt}</span><span class="remove-chip" data-index="${index}">✕</span>`;
-        optionsContainer.appendChild(chip);
+  // ---------- Options management ----------
+  function renderOptions(){
+    optionsList.innerHTML = '';
+    options.forEach((opt, idx)=>{
+      const chip = document.createElement('div');
+      chip.className = 'chip';
+      const span = document.createElement('span');
+      span.textContent = opt;
+      const del = document.createElement('div');
+      del.className = 'del';
+      del.textContent = '✕';
+      del.addEventListener('click', ()=>{
+        options.splice(idx,1);
+        renderOptions();
+        drawWheel(currentRotation);
       });
-      document.querySelectorAll('.remove-chip').forEach(btn => {
-        btn.addEventListener('click', (e) => {
-          const idx = parseInt(e.target.getAttribute('data-index'));
-          removeOption(idx);
-        });
-      });
+      chip.appendChild(span);
+      chip.appendChild(del);
+      optionsList.appendChild(chip);
+    });
+    countLabel.textContent = options.length + ' / ' + MAX_OPTIONS;
+    spinBtn.disabled = options.length < 2 || spinning;
+    addBtn.disabled = options.length >= MAX_OPTIONS;
+  }
+
+  function addOption(){
+    const val = optionInput.value.trim();
+    if(!val) return;
+    if(options.length >= MAX_OPTIONS) return;
+    const exists = options.some(o=>o.toLowerCase() === val.toLowerCase());
+    if(exists){
+      optionInput.style.borderColor = '#e53935';
+      setTimeout(()=>{ optionInput.style.borderColor=''; }, 500);
+      return;
     }
+    options.push(val);
+    optionInput.value = '';
+    renderOptions();
+    drawWheel(currentRotation);
+  }
 
-    function removeOption(index) {
-      if (spinning) return;
-      options.splice(index, 1);
-      renderOptionsList();
-      drawWheel(currentAngle);
-      resultDisplay.textContent = options.length < 2 ? "⚠️ En az 2 seçenek gerekli" : "⚡ Çark güncellendi";
-    }
+  addBtn.addEventListener('click', addOption);
+  optionInput.addEventListener('keydown', (e)=>{
+    if(e.key === 'Enter'){ addOption(); }
+  });
 
-    function addOption(optText) {
-      const trimmed = optText.trim();
-      if (trimmed === '') { alert("Bir şey yaz!"); return; }
-      if (options.includes(trimmed)) { alert("Bu zaten var!"); return; }
-      if (options.length >= 30) { alert("Maksimum 30 seçenek!"); return; }
-      options.push(trimmed);
-      renderOptionsList();
-      drawWheel(currentAngle);
-      optionInput.value = '';
-      if (options.length >= 2) resultDisplay.textContent = "🔥 Hazır!";
-    }
-
-    function clearAllOptions() {
-      if (spinning) return;
-      options = [];
-      renderOptionsList();
-      currentAngle = 0;
-      drawWheel(0);
-      resultDisplay.textContent = "🧹 Temizlendi";
-    }
-
-    // Event listeners
-    addBtn.addEventListener('click', () => addOption(optionInput.value));
-    optionInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') addOption(optionInput.value); });
-    spinBtn.addEventListener('click', startSpin);
-    clearBtn.addEventListener('click', clearAllOptions);
-    canvas.addEventListener('click', () => { if (!spinning && options.length >= 2) startSpin(); });
-
-    // Başlangıç
+  resetBtn.addEventListener('click', ()=>{
+    if(spinning) return;
+    options = [];
+    resultEl.textContent = '';
+    resultEl.classList.remove('pop');
+    renderOptions();
     drawWheel(0);
-    renderOptionsList();
-    resultDisplay.textContent = "🤘 Seçenekleri ekle, çevir!";
-  })();
+    currentRotation = 0;
+  });
+
+  // ---------- Wheel drawing ----------
+  let currentRotation = 0;
+
+  function drawTeeth(rotation){
+    const teethCount = 36;
+    const outerR = RADIUS + 10;
+    const innerR = RADIUS + 2;
+    wctx.save();
+    wctx.translate(CX,CY);
+    wctx.rotate(rotation);
+    for(let i=0;i<teethCount;i++){
+      const a = (i/teethCount)*Math.PI*2;
+      const a2 = a + (Math.PI*2/teethCount)/2;
+      wctx.beginPath();
+      wctx.moveTo(Math.cos(a)*innerR, Math.sin(a)*innerR);
+      wctx.lineTo(Math.cos(a2)*outerR, Math.sin(a2)*outerR);
+      wctx.lineTo(Math.cos(a+Math.PI*2/teethCount)*innerR, Math.sin(a+Math.PI*2/teethCount)*innerR);
+      wctx.closePath();
+      wctx.fillStyle = '#f4c542';
+      wctx.fill();
+    }
+    wctx.restore();
+  }
+
+  function drawWheel(rotation){
+    wctx.clearRect(0,0,W,H);
+
+    if(options.length === 0){
+      drawTeeth(rotation);
+      wctx.save();
+      wctx.beginPath();
+      wctx.arc(CX,CY,RADIUS,0,Math.PI*2);
+      wctx.fillStyle = '#3a3a3a';
+      wctx.fill();
+      wctx.restore();
+      wctx.fillStyle = '#f4c542';
+      wctx.font = "600 15px 'Quicksand', sans-serif";
+      wctx.textAlign = 'center';
+      wctx.textBaseline = 'middle';
+      wctx.fillText('Seçenek', CX, CY-8);
+      wctx.fillText('ekle', CX, CY+10);
+      return;
+    }
+
+    drawTeeth(rotation);
+
+    const seg = (Math.PI*2) / options.length;
+    wctx.save();
+    wctx.translate(CX,CY);
+    wctx.rotate(rotation);
+
+    for(let i=0;i<options.length;i++){
+      const start = -Math.PI/2 + i*seg;
+      const end = start + seg;
+      wctx.beginPath();
+      wctx.moveTo(0,0);
+      wctx.arc(0,0,RADIUS,start,end);
+      wctx.closePath();
+      wctx.fillStyle = PALETTE[i % PALETTE.length];
+      wctx.fill();
+      wctx.lineWidth = 2;
+      wctx.strokeStyle = 'rgba(255,255,255,0.35)';
+      wctx.stroke();
+
+      // label
+      wctx.save();
+      wctx.rotate(start + seg/2);
+      wctx.textAlign = 'right';
+      wctx.textBaseline = 'middle';
+      wctx.fillStyle = '#fff';
+      wctx.font = "600 13px 'Quicksand', sans-serif";
+      wctx.shadowColor = 'rgba(0,0,0,0.55)';
+      wctx.shadowBlur = 3;
+      let label = options[i];
+      const maxChars = 16;
+      if(label.length > maxChars) label = label.slice(0,maxChars-1) + '…';
+      wctx.fillText(label, RADIUS - 10, 0);
+      wctx.restore();
+    }
+    wctx.restore();
+  }
+
+  drawWheel(0);
+
+  // ---------- Spin physics ----------
+  let spinning = false;
+  let velocity = 0;
+  let phase = 'idle'; // 'accel-free' -> 'brake'
+  let brakeStartVelocity = 0;
+  let brakeElapsed = 0;
+  const BRAKE_DURATION = 3000; // ms
+  const FRICTION = 0.992;
+  const BRAKE_THRESHOLD = 0.02;
+  let lastTickSeg = -1;
+  let lastFrameTime = null;
+
+  function triggerTick(){
+    pointerEl.classList.remove('tick');
+    void pointerEl.offsetWidth;
+    pointerEl.classList.add('tick');
+  }
+
+  function pickResultIndex(){
+    const seg = (Math.PI*2) / options.length;
+    let norm = (-currentRotation) % (Math.PI*2);
+    if(norm < 0) norm += Math.PI*2;
+    let idx = Math.floor(norm / seg) % options.length;
+    return idx;
+  }
+
+  function spinLoop(timestamp){
+    if(!lastFrameTime) lastFrameTime = timestamp;
+    const dt = timestamp - lastFrameTime;
+    lastFrameTime = timestamp;
+    const frameScale = dt / 16.6667; // normalize to 60fps steps
+
+    if(phase === 'free'){
+      velocity *= Math.pow(FRICTION, frameScale);
+      currentRotation += velocity * frameScale;
+      if(velocity <= BRAKE_THRESHOLD){
+        phase = 'brake';
+        brakeStartVelocity = velocity;
+        brakeElapsed = 0;
+      }
+    } else if(phase === 'brake'){
+      brakeElapsed += dt;
+      const t = Math.min(brakeElapsed / BRAKE_DURATION, 1);
+      velocity = brakeStartVelocity * (1 - t);
+      currentRotation += velocity * frameScale;
+      if(t >= 1){
+        velocity = 0;
+        phase = 'done';
+      }
+    }
+
+    // tick detection
+    if(options.length > 0){
+      const seg = (Math.PI*2) / options.length;
+      const segIndex = Math.floor((currentRotation % (Math.PI*2)) / seg);
+      if(segIndex !== lastTickSeg){
+        lastTickSeg = segIndex;
+        triggerTick();
+      }
+    }
+
+    drawWheel(currentRotation);
+
+    // ambient confetti while spinning
+    if(Math.random() < 0.5){
+      const rect = wheelCanvas.getBoundingClientRect();
+      spawnConfetti(1, rect.left + rect.width/2 + (Math.random()-0.5)*rect.width, rect.top + rect.height/2 + (Math.random()-0.5)*rect.height, false);
+    }
+
+    if(phase === 'done'){
+      finishSpin();
+      return;
+    }
+    requestAnimationFrame(spinLoop);
+  }
+
+  function finishSpin(){
+    spinning = false;
+    spinBtn.disabled = options.length < 2;
+    resetBtn.disabled = false;
+    lastFrameTime = null;
+
+    const idx = pickResultIndex();
+    const winner = options[idx];
+    resultEl.textContent = '🎉 ' + winner + ' 🎉';
+    resultEl.classList.remove('pop');
+    void resultEl.offsetWidth;
+    resultEl.classList.add('pop');
+
+    const rect = wheelCanvas.getBoundingClientRect();
+    spawnConfetti(28, rect.left + rect.width/2, rect.top + rect.height/2, true);
+  }
+
+  spinBtn.addEventListener('click', startSpin);
+  wheelCanvas.addEventListener('click', ()=>{ if(!spinning) startSpin(); });
+
+  function startSpin(){
+    if(spinning) return;
+    if(options.length < 2) return;
+    spinning = true;
+    spinBtn.disabled = true;
+    resetBtn.disabled = true;
+    resultEl.textContent = '';
+    resultEl.classList.remove('pop');
+
+    velocity = 0.22 + Math.random()*0.13; // 0.22 - 0.35 rad/frame
+    phase = 'free';
+    lastTickSeg = Math.floor((currentRotation % (Math.PI*2)) / ((Math.PI*2)/Math.max(options.length,1)));
+    lastFrameTime = null;
+    requestAnimationFrame(spinLoop);
+  }
+
+  // ---------- Seed a few starter options ----------
+  ['Pizza','Sushi','Burger','Kebap'].forEach(o=>options.push(o));
+  renderOptions();
+  drawWheel(0);
+
+})();
 </script>
 </body>
 </html>
